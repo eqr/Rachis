@@ -33,7 +33,7 @@ namespace TailFeather.Controllers
                     }
                     catch (NotLeadingException e)
                     {
-                        return RedirectToLeader(e.CurrentLeader, Request.RequestUri);
+                        return this.RedirectToLeader(e.CurrentLeader, Request.RequestUri);
                     }
                     var consistentRead = await taskCompletionSource.Task;
                     return Request.CreateResponse(HttpStatusCode.OK, new
@@ -46,18 +46,18 @@ namespace TailFeather.Controllers
                 case "leader":
                     if (RaftEngine.State != RaftEngineState.Leader)
                     {
-                        return RedirectToLeader(RaftEngine.CurrentLeader, Request.RequestUri);
+                        return this.RedirectToLeader(RaftEngine.CurrentLeader, Request.RequestUri);
                     }
                     goto case null;
                 case "any":
                 case null:
-                    var read = StateMachine.Read(key);
+                  //  var read = StateMachine.Read(key);
                     return Request.CreateResponse(HttpStatusCode.OK, new
                     {
                         RaftEngine.State,
                         Key = key,
-                        Value = read,
-                        Missing = read == null
+                    //    Value = read,
+                    //    Missing = read == null
                     });
                 default:
                     return Request.CreateResponse(HttpStatusCode.BadRequest, new
@@ -66,26 +66,6 @@ namespace TailFeather.Controllers
                     });
             }
 
-        }
-
-        private HttpResponseMessage RedirectToLeader(string currentLeader, Uri baseUrl)
-        {
-            var leaderNode = RaftEngine.CurrentTopology.AllNodes.FirstOrDefault(x => { return x.Name == currentLeader; });
-            if (leaderNode == null)
-            {
-                return Request.CreateResponse(HttpStatusCode.BadRequest, new
-                {
-                    Error = "There is no current leader, try again later"
-                });
-            }
-            var httpResponseMessage = Request.CreateResponse(HttpStatusCode.Redirect);
-            httpResponseMessage.Headers.Location = new UriBuilder(leaderNode.Uri)
-            {
-                Path = baseUrl.LocalPath,
-                Query = baseUrl.Query.TrimStart('?'),
-                Fragment = baseUrl.Fragment
-            }.Uri;
-            return httpResponseMessage;
         }
 
         [HttpGet]
@@ -151,7 +131,7 @@ namespace TailFeather.Controllers
 			}
 			catch (NotLeadingException e)
 			{
-				return RedirectToLeader(e.CurrentLeader, Request.RequestUri);
+				return this.RedirectToLeader(e.CurrentLeader, Request.RequestUri);
 			}
 			var newValueSet = await taskCompletionSource.Task;
 			return Request.CreateResponse(HttpStatusCode.OK, new
@@ -198,7 +178,7 @@ namespace TailFeather.Controllers
             }
             catch (NotLeadingException e)
             {
-                return RedirectToLeader(e.CurrentLeader, Request.RequestUri);
+                return this.RedirectToLeader(e.CurrentLeader, Request.RequestUri);
             }
             await taskCompletionSource.Task;
 

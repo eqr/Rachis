@@ -13,7 +13,9 @@ using Voron;
 
 namespace TailFeather
 {
-	internal class Program
+    using TailFeather.Storage.PonyBets;
+
+    internal class Program
 	{
 		private static void Main(string[] args)
 		{
@@ -30,9 +32,9 @@ namespace TailFeather
 			Console.Title = string.Format("Node name: {0}, port: {1}", nodeName, options.Port);
 
 			var kvso = StorageEnvironmentOptions.ForPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, options.DataPath, "KeyValue"));
-			using (var statemachine = new KeyValueStateMachine(kvso))
+			using (var statemachine = new PonyBetsStateMachine())
 			{
-				var storageEnvironmentOptions = StorageEnvironmentOptions.ForPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, options.DataPath, "Raft"));
+                var storageEnvironmentOptions = StorageEnvironmentOptions.ForPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, options.DataPath, "Raft"));
 				var httpTransport = new HttpTransport(nodeName);
 				var raftEngineOptions = new RaftEngineOptions(
 					new NodeConnectionInfo

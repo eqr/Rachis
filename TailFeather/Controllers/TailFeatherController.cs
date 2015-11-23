@@ -10,15 +10,22 @@ using TailFeather.Storage;
 
 namespace TailFeather.Controllers
 {
-	public abstract class TailFeatherController : ApiController
+    using System;
+    using System.Linq;
+
+    using Rachis.Interfaces;
+
+    using TailFeather.Storage.PonyBets;
+
+    public abstract class TailFeatherController : ApiController
 	{
-		public KeyValueStateMachine StateMachine { get; private set; }
+		public IRaftStateMachine StateMachine { get; private set; }
 		public RaftEngine RaftEngine { get; private set; }
 
 		public override async Task<HttpResponseMessage> ExecuteAsync(HttpControllerContext controllerContext, CancellationToken cancellationToken)
 		{
 			RaftEngine = (RaftEngine)controllerContext.Configuration.Properties[typeof(RaftEngine)];
-			StateMachine = (KeyValueStateMachine)RaftEngine.StateMachine;
+			StateMachine = (PonyBetsStateMachine)RaftEngine.StateMachine;
 			try
 			{
 				return await base.ExecuteAsync(controllerContext, cancellationToken);
@@ -44,5 +51,25 @@ namespace TailFeather.Controllers
 				};
 			}
 		}
+
+        protected HttpResponseMessage RedirectToLeader(string currentLeader, Uri baseUrl)
+        {
+            var leaderNode = this.RaftEngine.CurrentTopology.AllNodes.FirstOrDefault(x => { return x.Name == currentLeader; });
+            if (leaderNode == null)
+            {
+                return this.Request.CreateResponse(HttpStatusCode.BadRequest, new
+                                                                             {
+                                                                                 Error = "There is no current leader, try again later"
+                                                                             });
+            }
+            var httpResponseMessage = this.Request.CreateResponse(HttpStatusCode.Redirect);
+            httpResponseMessage.Headers.Location = new UriBuilder(leaderNode.Uri)
+                                                       {
+                                                           Path = baseUrl.LocalPath,
+                                                           Query = baseUrl.Query.TrimStart('?'),
+                                                           Fragment = baseUrl.Fragment
+                                                       }.Uri;
+            return httpResponseMessage;
+        }
 	}
 }

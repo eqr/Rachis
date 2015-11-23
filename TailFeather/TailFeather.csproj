@@ -78,13 +78,20 @@
   <ItemGroup>
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\KeyValueController.cs" />
+    <Compile Include="Controllers\PonyBetController.cs" />
+    <Compile Include="Controllers\Storage\PonyBets\Bet.cs" />
+    <Compile Include="Controllers\Storage\PonyBets\BetOnPonyCommand.cs" />
+    <Compile Include="Controllers\Storage\PonyBets\GetAllBetsCommand.cs" />
+    <Compile Include="Controllers\Storage\PonyBets\Odd.cs" />
+    <Compile Include="Controllers\Storage\PonyBets\OddsReference.cs" />
     <Compile Include="Controllers\TailFeatherController.cs" />
-    <Compile Include="Storage\KeyValueOperation.cs" />
-    <Compile Include="Storage\KeyValueOperationTypes.cs" />
-    <Compile Include="Storage\KeyValueStateMachine.cs" />
+    <Compile Include="Controllers\Storage\KeyValueOperation.cs" />
+    <Compile Include="Controllers\Storage\KeyValueOperationTypes.cs" />
+    <Compile Include="Controllers\Storage\KeyValueStateMachine.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Storage\OperationBatchCommand.cs" />
+    <Compile Include="Controllers\Storage\OperationBatchCommand.cs" />
+    <Compile Include="Controllers\Storage\PonyBets\PonyBetsStateMachine.cs" />
     <Compile Include="TailFeatherCommandLineOptions.cs" />
   </ItemGroup>
   <ItemGroup>
