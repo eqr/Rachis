@@ -1,3 +1,5 @@
+This is a hack of original Rachis to make a distributed database serving bets on pony races.
+
 Rhino.Raft
 ----------
 Implementation of Raft protocol for use with RavenDB 
